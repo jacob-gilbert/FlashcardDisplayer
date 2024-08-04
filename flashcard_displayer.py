@@ -200,6 +200,7 @@ def shuffle_lists():
     random.shuffle(needs_more_work_list)
     new_word()
 
+# save the flashcard data to a .txt file to save progress
 def save_data(filename):
     global curr_list
 
@@ -223,6 +224,7 @@ def save_data(filename):
     except Exception as e:
         print(f"An error occurred while saving data: {e}")
 
+# what to do when the window closes
 def on_close():
     save_data('flashcard_list2.txt')
     window.destroy()
