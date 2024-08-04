@@ -8,6 +8,8 @@
 - Displays a word on the screen and clicking a button alternates to its definition
 - Can select a new random word to study and be given the word first
 - Can select a new random word to study and be given the definition first
+- Multiple word lists to sort flashcards based on knowledge level
+- Ability to shuffle the different lists
 
 ### Upcoming additions/changes
 - Adding words and definitions within the program
