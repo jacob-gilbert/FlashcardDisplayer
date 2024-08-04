@@ -9,6 +9,7 @@ TILE_SIZE = 25
 WINDOW_WIDTH = TILE_SIZE * COLS
 WINDOW_HEIGHT = TILE_SIZE * ROWS
 
+# FlashCard class contains a word and a definition
 class FlashCard:
     def __init__(self, word, definition):
         self.word = word
@@ -23,23 +24,57 @@ class FlashCard:
     def print_card(self):
         return f"{self.word} - {self.definition}"
 
+# load the words and definitions into the different word lists from the .txt file
 def load_words_and_defs():
     try:
         with open('flashcard_list.txt', 'r') as file:
-            for line in file:
-                split_word = line.split(":")
-                flashcard = FlashCard(split_word[0].strip(), split_word[1].strip())
-                flashcard_list.append(flashcard)
+            known = False
+            needs_more_work = False
+            for line in file: # split the words up into the respective categories of knowledge level
+                #print(line)
+                if line == "\n":
+                    continue
+                if line == "Not Known:\n":
+                    known = False
+                    needs_more_work = False
+                    continue
+                elif line == "Known:\n":
+                    known = True
+                    needs_more_work = False
+                    continue
+                elif line == "Needs More Work:\n":
+                    needs_more_work = True
+                    known = False
+                    continue
+
+                if known == True:
+                    split_word = line.split(":")
+                    flashcard = FlashCard(split_word[0].strip(), split_word[1].strip())
+                    known_list.append(flashcard)
+                elif needs_more_work == True:
+                    split_word = line.split(":")
+                    flashcard = FlashCard(split_word[0].strip(), split_word[1].strip())
+                    needs_more_work_list.append(flashcard)
+                else: # if there is no label for where the word should go just put in the not known list
+                    split_word = line.split(":")
+                    flashcard = FlashCard(split_word[0].strip(), split_word[1].strip())
+                    not_known_list.append(flashcard)
+
     except FileNotFoundError:
         print("The file was not found.")
     except IOError:
         print("An error occurred while reading the file.")
 
+# flip the flashcard to the side that displays the defintion
 def to_definition():
     global canvas_text
 
+    if curr_card == None:
+        return
+
     canvas.itemconfig(tagOrId=canvas_text, text=insert_newlines(curr_card.get_definition()))
 
+# used for displaying the definition on the screen in a way that doesn't cut any part off of the screen
 def insert_newlines(paragraph, words_per_line=5):
     # Split the paragraph into a list of words
     words = paragraph.split()
@@ -55,32 +90,137 @@ def insert_newlines(paragraph, words_per_line=5):
     # Join all the lines with newline characters
     return '\n'.join(new_lines)
 
+# flip the flashcard to the side that displays the word
 def to_word():
     global canvas_text
+
+    if curr_card == None:
+        return
+    
     canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word())
 
+# display a different word
 def new_word():
-    global curr_card, flashcard_list
+    global curr_card, curr_list
 
-    flashcard_list.append(curr_card) # return the flashcard to the end of the list
-    curr_card = flashcard_list.popleft() # select a new card to study
+    if curr_card == None:
+        return
+
+    curr_list.append(curr_card) # return the flashcard to the end of the list
+    curr_card = curr_list.popleft() # select a new card to study
 
     canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word()) # display the new word
 
+# display a definition for a different word
 def new_definition():
-    global curr_card, flashcard_list
+    global curr_card, curr_list
 
-    flashcard_list.append(curr_card) # return the flashcard to the end of the list
-    curr_card = flashcard_list.popleft() # select a new card to study
+    if curr_card == None:
+        return
+
+    curr_list.append(curr_card) # return the flashcard to the end of the list
+    curr_card = curr_list.popleft() # select a new card to study
 
     canvas.itemconfig(tagOrId=canvas_text, text=to_definition()) # display the new definition
+
+# switch to the not known word list
+def switch_list_not_known():
+    global curr_list, not_known_bool, known_bool, needs_more_work_bool, curr_card
+
+    if not_known_bool:
+        return
+    else:
+        if curr_card != None:
+            curr_list.append(curr_card)
+        curr_list = not_known_list
+        known_bool = False
+        needs_more_work_bool = False
+        not_known_bool = True
+
+        if isEmpty(curr_list):
+            curr_card = None
+            canvas.itemconfig(tagOrId=canvas_text, text="Current List Is Empty Select a New One") # display that the list is empty
+            return
+        curr_card = curr_list.popleft() # select a new card to study from the new list
+        canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word()) # display the new word
+
+# switch to the known word list
+def switch_list_known():
+    global curr_list, not_known_bool, known_bool, needs_more_work_bool, curr_card
+
+    if known_bool:
+        return
+    else:
+        if curr_card != None:
+            curr_list.append(curr_card)
+        curr_list = known_list
+        known_bool = True
+        needs_more_work_bool = False
+        not_known_bool = False
+
+        if isEmpty(curr_list):
+            curr_card = None
+            canvas.itemconfig(tagOrId=canvas_text, text="Current List Is Empty Select a New One") # display that the list is empty
+            return
+        curr_card = curr_list.popleft() # select a new card to study from the new list
+        canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word()) # display the new word
+
+# switch to the needs more work word list
+def switch_list_needs_more_work():
+    global curr_list, not_known_bool, known_bool, needs_more_work_bool, curr_card
+
+    if needs_more_work_bool:
+        return
+    else:
+        if curr_card != None:
+            curr_list.append(curr_card)
+        curr_list = needs_more_work_list
+        known_bool = False
+        needs_more_work_bool = True
+        not_known_bool = False
+
+        if isEmpty(curr_list):
+            curr_card = None
+            canvas.itemconfig(tagOrId=canvas_text, text="Current List Is Empty Select a New One") # display that the list is empty
+            return
+        curr_card = curr_list.popleft() # select a new card to study from the new list
+        canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word()) # display the new word
+
+# check if a list is empty
+def isEmpty(lst):
+    return len(lst) == 0
+
+# shuffles every word list
+def shuffle_lists():
+    if curr_card == None:
+        canvas.itemconfig(tagOrId=canvas_text, text="Cannot Shuffle Empty List")
+    random.shuffle(curr_list)
+    random.shuffle(not_known_list)
+    random.shuffle(known_list)
+    random.shuffle(needs_more_work_list)
+    new_word()
+    
     
 
 # initialize flashcards
-flashcard_list = deque()
+not_known_list = deque()
+known_list = deque()
+needs_more_work_list = deque()
+
 load_words_and_defs()
-random.shuffle(flashcard_list)
-curr_card = flashcard_list.popleft()
+
+# shuffle all the lists
+random.shuffle(not_known_list)
+random.shuffle(known_list)
+random.shuffle(needs_more_work_list)
+
+curr_list = not_known_list
+curr_card = curr_list.popleft()
+
+# keep track of which list is being studied
+not_known_bool = True
+known_bool = False
+needs_more_work_bool = False
 
 
 # game window
@@ -115,9 +255,27 @@ new_word_button = tkinter.Button(frame_right, text="New Word", font=("Consolas")
                         foreground="white", command=new_word)
 new_word_button.grid(row=3, column=0, columnspan=3, sticky="nswe")
 
-new_definition_button = tkinter.Button(frame_right, text="New Def", font=("Consolas"), background="blue",
+new_definition_button = tkinter.Button(frame_right, text="New Definition", font=("Consolas"), background="blue",
                         foreground="white", command=new_definition)
 new_definition_button.grid(row=4, column=0, columnspan=3, sticky="nswe")
+
+# create buttons to change which word list is being studied
+not_known_button = tkinter.Button(frame_right, text="Not Known Words", font=("Consolas"), background="green",
+                        foreground="white", command=switch_list_not_known)
+not_known_button.grid(row=5, column=0, columnspan=3, sticky="nswe")
+
+known_button = tkinter.Button(frame_right, text="Known Words", font=("Consolas"), background="green",
+                        foreground="white", command=switch_list_known)
+known_button.grid(row=7, column=0, columnspan=3, sticky="nswe")
+
+needs_more_work_button = tkinter.Button(frame_right, text="More Work Words", font=("Consolas"), background="green",
+                        foreground="white", command=switch_list_needs_more_work)
+needs_more_work_button.grid(row=6, column=0, columnspan=3, sticky="nswe")
+
+# create a button to shuffle all the lists
+shuffle_button = tkinter.Button(frame_right, text="Shuffle Words", font=("Consolas"), background="purple",
+                        foreground="white", command=shuffle_lists)
+shuffle_button.grid(row=8, column=0, columnspan=3, sticky="nswe")
 
 
 window.update()
