@@ -199,6 +199,33 @@ def shuffle_lists():
     random.shuffle(known_list)
     random.shuffle(needs_more_work_list)
     new_word()
+
+def save_data(filename):
+    global curr_list
+
+    curr_list.append(curr_card) # add the displayed card back to the list before saving and closing the program
+
+    try:
+        with open(filename, 'w') as file:
+            file.write("Not Known: \n")
+            for card in not_known_list:
+                file.write(f"{card.get_word()} : {card.get_definition()}\n")
+            file.write("\n")
+            
+            file.write("Needs More Work: \n")
+            for card in known_list:
+                file.write(f"{card.get_word()} : {card.get_definition()}\n")
+            file.write("\n")
+            
+            file.write("Known: \n")
+            for card in needs_more_work_list:
+                file.write(f"{card.get_word()} : {card.get_definition()}\n")
+    except Exception as e:
+        print(f"An error occurred while saving data: {e}")
+
+def on_close():
+    save_data('flashcard_list2.txt')
+    window.destroy()
     
     
 
@@ -277,6 +304,8 @@ shuffle_button = tkinter.Button(frame_right, text="Shuffle Words", font=("Consol
                         foreground="white", command=shuffle_lists)
 shuffle_button.grid(row=8, column=0, columnspan=3, sticky="nswe")
 
+# Bind the window close event --> when the window closes the flashcards will be saved to a .txt file
+window.protocol("WM_DELETE_WINDOW", on_close)
 
 window.update()
 
