@@ -1,7 +1,7 @@
 # FlashcardDisplayer
 
 ### Directions
-- Download flashcard_displayers.py create a flashcard_list.txt file that contains words in defintions
+- Download flashcard_displayers.py create a flashcard_list.txt file that contains words and defintions
 - .txt file format --> word : definition
 
 ### Features
