@@ -345,7 +345,7 @@ window.resizable(False, False) # user cannot change the size of the window
 
 # create frame to hold the canvas where the word and definition will appear
 frame_left = tkinter.Frame(window, bg='lightblue')
-frame_left.grid(row=0, column=0, columnspan=3, sticky='nsew')
+frame_left.grid(row=0, column=0, columnspan=3, sticky='nswe')
 
 canvas = tkinter.Canvas(frame_left, bg="white", width=WINDOW_WIDTH, height=WINDOW_HEIGHT,
                         borderwidth=0, highlightthickness=0)
@@ -407,7 +407,7 @@ add_known_button.grid(row=11, column=0, columnspan=3, sticky="nswe")
 
 # create frame to hold the input
 frame_below = tkinter.Frame(window, bg='lightblue')
-frame_below.grid(row=1, column=0, columnspan=4, sticky='nsew')
+frame_below.grid(row=1, column=0, columnspan=4, sticky='nswe')
 
 # create an Entry widget
 entry = tkinter.Entry(frame_below, width=40)
