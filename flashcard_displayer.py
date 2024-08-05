@@ -226,7 +226,7 @@ def save_data(filename):
 
 # what to do when the window closes
 def on_close():
-    save_data('flashcard_list2.txt')
+    save_data('flashcard_list.txt')
     window.destroy()
 
 # adds the current card to the not known flashcard list and then displays the next card in the current list
