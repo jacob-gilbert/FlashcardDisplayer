@@ -2,7 +2,7 @@
 
 ### Directions
 - Download flashcard_displayers.py create a flashcard_list.txt file that contains words in defintions
-- Format --> word : definition
+- .txt file format --> word : definition
 
 ### Features
 - Displays a word on the screen and clicking a button alternates to its definition
