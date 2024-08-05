@@ -34,15 +34,18 @@ def load_words_and_defs():
                 #print(line)
                 if line == "\n":
                     continue
-                if line == "Not Known:\n":
+                if "Not Known:" in line:
+                    print("not known")
                     known = False
                     needs_more_work = False
                     continue
-                elif line == "Known:\n":
+                elif "Known:" in line:
+                    print("known")
                     known = True
                     needs_more_work = False
                     continue
-                elif line == "Needs More Work:\n":
+                elif "Needs More Work:" in line:
+                    print("known")
                     needs_more_work = True
                     known = False
                     continue
@@ -276,7 +279,19 @@ def add_needs_more_work():
     else:
         curr_card = None
         canvas.itemconfig(tagOrId=canvas_text, text="Current List Is Empty Select a New One") # display that the list is empty
-    
+
+"""def add_new_word():
+    # Get the value from the Entry widget
+    user_input = entry.get()
+    if entry == "Word : Definition":
+        canvas.itemconfig(tagOrId=canvas_text, text="No word in text bar") # display to the user that they did not type a word in
+        return
+    added_word = user_input.split(":")
+    if len(added_word) != 2:
+        canvas.itemconfig(tagOrId=canvas_text, text="Wrong format used, must be word : definition")
+        return
+    print("User input:", user_input)"""
+
 
 # initialize flashcards
 not_known_list = deque()
@@ -284,6 +299,10 @@ known_list = deque()
 needs_more_work_list = deque()
 
 load_words_and_defs()
+
+for word in not_known_list:
+    pass
+    #print(word.get_word(), word.get_definition())
 
 # shuffle all the lists
 random.shuffle(not_known_list)
@@ -306,7 +325,7 @@ window.resizable(False, False) # user cannot change the size of the window
 
 # create frame to hold the canvas where the word and definition will appear
 frame_left = tkinter.Frame(window, bg='lightblue')
-frame_left.grid(row=0, column=0, sticky='nsew')
+frame_left.grid(row=0, column=0, columnspan=2, sticky='nsew')
 
 canvas = tkinter.Canvas(frame_left, bg="white", width=WINDOW_WIDTH, height=WINDOW_HEIGHT,
                         borderwidth=0, highlightthickness=0)
@@ -317,7 +336,7 @@ canvas_text = canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, font="Arial 20
 
 # create frame to place the buttons to change the word and definition
 frame_right = tkinter.Frame(window, bg="lightgray")
-frame_right.grid(row=0, column=1, sticky="nswe")
+frame_right.grid(row=0, column=3, sticky="nswe")
 
 definition_button = tkinter.Button(frame_right, text="Definition", font=("Consolas"), background="red",
                         foreground="white", command=to_definition)
@@ -366,7 +385,20 @@ add_known_button = tkinter.Button(frame_right, text="Add Known", font=("Consolas
                         foreground="white", command=add_known)
 add_known_button.grid(row=11, column=0, columnspan=3, sticky="nswe")
 
-# Bind the window close event --> when the window closes the flashcards will be saved to a .txt file
+"""# create frame to hold the input
+frame_below = tkinter.Frame(window, bg='lightblue')
+frame_below.grid(row=1, column=0, columnspan=2, sticky='nsew')
+
+# create an Entry widget
+entry = tkinter.Entry(frame_below, width=40)
+entry.grid(row=0, column=0, padx=10, pady=10)
+entry.insert(0, "Word : Definition")  # Insert placeholder text
+
+# create a Button to retrieve the input from the Entry widget
+add_new_word_button = tkinter.Button(frame_below, text="Add Word", command=add_new_word)
+add_new_word_button.grid(row=0, column=2, pady=5)  # place the Button next to the Entry widget"""
+
+# bind the window close event --> when the window closes the flashcards will be saved to a .txt file
 window.protocol("WM_DELETE_WINDOW", on_close)
 
 window.update()
