@@ -1,4 +1,5 @@
 import tkinter
+from tkinter import simpledialog
 import random
 from collections import deque
 
@@ -31,21 +32,17 @@ def load_words_and_defs():
             known = False
             needs_more_work = False
             for line in file: # split the words up into the respective categories of knowledge level
-                #print(line)
                 if line == "\n":
                     continue
                 if "Not Known:" in line:
-                    print("not known")
                     known = False
                     needs_more_work = False
                     continue
                 elif "Known:" in line:
-                    print("known")
                     known = True
                     needs_more_work = False
                     continue
                 elif "Needs More Work:" in line:
-                    print("known")
                     needs_more_work = True
                     known = False
                     continue
@@ -280,17 +277,40 @@ def add_needs_more_work():
         curr_card = None
         canvas.itemconfig(tagOrId=canvas_text, text="Current List Is Empty Select a New One") # display that the list is empty
 
-"""def add_new_word():
+def add_new_word():
     # Get the value from the Entry widget
     user_input = entry.get()
-    if entry == "Word : Definition":
-        canvas.itemconfig(tagOrId=canvas_text, text="No word in text bar") # display to the user that they did not type a word in
+    if "word : definition" in user_input.lower():
+        canvas.itemconfig(tagOrId=canvas_text, text="Replace Word : Definition in text bar") # display to the user that they did not type a word in
         return
     added_word = user_input.split(":")
     if len(added_word) != 2:
         canvas.itemconfig(tagOrId=canvas_text, text="Wrong format used, must be word : definition")
         return
-    print("User input:", user_input)"""
+    else:
+        not_known_list.append(FlashCard(added_word[0].strip(), added_word[1].strip()))
+        canvas.itemconfig(tagOrId=canvas_text, text=added_word[0].strip() + " added to\nnot known list")
+
+def delete_word():
+    global curr_card, curr_list
+
+    # Create a new window to prompt the user
+    response = simpledialog.askstring("Delete", f"Do you want to delete {curr_card.get_word()} y/n:")
+    if response:
+        response = response.strip().lower()
+        if response == 'y':
+            if not isEmpty(curr_list):
+                canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word() + " Successfully Deleted")
+                curr_card = curr_list.popleft() # select next card in the list
+            else:
+                canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word() + " Successfully Deleted\n Current List is Empty")
+                curr_card = None
+        elif response == 'n':
+            canvas.itemconfig(tagOrId=canvas_text, text="No Word Deleted")
+        else:
+            canvas.itemconfig(tagOrId=canvas_text, text="Invalid input. Please enter 'y' or 'n'.")
+    else:
+        canvas.itemconfig(tagOrId=canvas_text, text="No input provided.")
 
 
 # initialize flashcards
@@ -325,7 +345,7 @@ window.resizable(False, False) # user cannot change the size of the window
 
 # create frame to hold the canvas where the word and definition will appear
 frame_left = tkinter.Frame(window, bg='lightblue')
-frame_left.grid(row=0, column=0, columnspan=2, sticky='nsew')
+frame_left.grid(row=0, column=0, columnspan=3, sticky='nsew')
 
 canvas = tkinter.Canvas(frame_left, bg="white", width=WINDOW_WIDTH, height=WINDOW_HEIGHT,
                         borderwidth=0, highlightthickness=0)
@@ -335,8 +355,8 @@ canvas_text = canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, font="Arial 20
                            fill="black")
 
 # create frame to place the buttons to change the word and definition
-frame_right = tkinter.Frame(window, bg="lightgray")
-frame_right.grid(row=0, column=3, sticky="nswe")
+frame_right = tkinter.Frame(window, bg="lightblue")
+frame_right.grid(row=0, column=4, sticky="nswe")
 
 definition_button = tkinter.Button(frame_right, text="Definition", font=("Consolas"), background="red",
                         foreground="white", command=to_definition)
@@ -385,18 +405,22 @@ add_known_button = tkinter.Button(frame_right, text="Add Known", font=("Consolas
                         foreground="white", command=add_known)
 add_known_button.grid(row=11, column=0, columnspan=3, sticky="nswe")
 
-"""# create frame to hold the input
+# create frame to hold the input
 frame_below = tkinter.Frame(window, bg='lightblue')
-frame_below.grid(row=1, column=0, columnspan=2, sticky='nsew')
+frame_below.grid(row=1, column=0, columnspan=4, sticky='nsew')
 
 # create an Entry widget
 entry = tkinter.Entry(frame_below, width=40)
 entry.grid(row=0, column=0, padx=10, pady=10)
 entry.insert(0, "Word : Definition")  # Insert placeholder text
 
-# create a Button to retrieve the input from the Entry widget
+# create a Button to add a new word via the input from the Entry widget
 add_new_word_button = tkinter.Button(frame_below, text="Add Word", command=add_new_word)
-add_new_word_button.grid(row=0, column=2, pady=5)  # place the Button next to the Entry widget"""
+add_new_word_button.grid(row=0, column=2, pady=5)  # place the Button next to the Entry widget
+
+# create a button to delete the current word
+delete_word_button = tkinter.Button(frame_below, text="Delete Word", command=delete_word)
+delete_word_button.grid(row=0, column=3, pady=5)
 
 # bind the window close event --> when the window closes the flashcards will be saved to a .txt file
 window.protocol("WM_DELETE_WINDOW", on_close)
