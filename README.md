@@ -12,9 +12,10 @@
 - Ability to shuffle the different lists
 - Can add flashcards to different knowledge level lists to show progress for learning them (Not Known, Needs More Work, Known)
 - Flashcards are saved to a .txt file upon the program closing so that progress is saved
+- Can add and delete words and definitions within the program
 
 ### Upcoming additions/changes
-- Adding words and definitions within the program
+- 
 
 ### Known Bugs
 - None
