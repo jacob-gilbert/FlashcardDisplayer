@@ -344,7 +344,7 @@ window.title("Flashcard Displayer")
 window.resizable(False, False) # user cannot change the size of the window
 
 # create frame to hold the canvas where the word and definition will appear
-frame_left = tkinter.Frame(window, bg='lightblue')
+frame_left = tkinter.Frame(window, bg='white')
 frame_left.grid(row=0, column=0, columnspan=3, sticky='nswe')
 
 canvas = tkinter.Canvas(frame_left, bg="white", width=WINDOW_WIDTH, height=WINDOW_HEIGHT,
@@ -355,8 +355,8 @@ canvas_text = canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, font="Arial 20
                            fill="black")
 
 # create frame to place the buttons to change the word and definition
-frame_right = tkinter.Frame(window, bg="lightblue")
-frame_right.grid(row=0, column=4, sticky="nswe")
+frame_right = tkinter.Frame(window, bg="white")
+frame_right.grid(row=0, column=4, rowspan=2, sticky="nswe")
 
 definition_button = tkinter.Button(frame_right, text="Definition", font=("Consolas"), background="red",
                         foreground="white", command=to_definition)
@@ -406,8 +406,8 @@ add_known_button = tkinter.Button(frame_right, text="Add Known", font=("Consolas
 add_known_button.grid(row=11, column=0, columnspan=3, sticky="nswe")
 
 # create frame to hold the input
-frame_below = tkinter.Frame(window, bg='lightblue')
-frame_below.grid(row=1, column=0, columnspan=4, sticky='nswe')
+frame_below = tkinter.Frame(window, bg='white')
+frame_below.grid(row=1, column=0, columnspan=3, sticky='nswe')
 
 # create an Entry widget
 entry = tkinter.Entry(frame_below, width=40)
