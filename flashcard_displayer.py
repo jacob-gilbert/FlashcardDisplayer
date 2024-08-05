@@ -228,7 +228,54 @@ def save_data(filename):
 def on_close():
     save_data('flashcard_list2.txt')
     window.destroy()
+
+# adds the current card to the not known flashcard list and then displays the next card in the current list
+def add_not_known():
+    global not_known_list, curr_card
+
+    if curr_card == None:
+        return
+
+    not_known_list.append(curr_card)
     
+    if not isEmpty(curr_list):
+        curr_card = curr_list.popleft() # select a new card to study
+        canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word()) # display the new word
+    else:
+        curr_card = None
+        canvas.itemconfig(tagOrId=canvas_text, text="Current List Is Empty Select a New One") # display that the list is empty
+
+# adds the current card to the known flashcard list and then displays the next card in the current list
+def add_known():
+    global known_list, curr_card
+
+    if curr_card == None:
+        return
+
+    known_list.append(curr_card)
+    
+    if not isEmpty(curr_list):
+        curr_card = curr_list.popleft() # select a new card to study
+        canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word()) # display the new word
+    else:
+        curr_card = None
+        canvas.itemconfig(tagOrId=canvas_text, text="Current List Is Empty Select a New One") # display that the list is empty
+
+# adds the current card to the needs more work flashcard list and then displays the next card in the current list
+def add_needs_more_work():
+    global needs_more_work_list, curr_card
+
+    if curr_card == None:
+        return
+
+    needs_more_work_list.append(curr_card)
+    
+    if not isEmpty(curr_list):
+        curr_card = curr_list.popleft() # select a new card to study
+        canvas.itemconfig(tagOrId=canvas_text, text=curr_card.get_word()) # display the new word
+    else:
+        curr_card = None
+        canvas.itemconfig(tagOrId=canvas_text, text="Current List Is Empty Select a New One") # display that the list is empty
     
 
 # initialize flashcards
@@ -305,6 +352,19 @@ needs_more_work_button.grid(row=6, column=0, columnspan=3, sticky="nswe")
 shuffle_button = tkinter.Button(frame_right, text="Shuffle Words", font=("Consolas"), background="purple",
                         foreground="white", command=shuffle_lists)
 shuffle_button.grid(row=8, column=0, columnspan=3, sticky="nswe")
+
+# create buttons to add flashcards to different knowledge level lists
+add_not_known_button = tkinter.Button(frame_right, text="Add Not Known", font=("Consolas"), background="black",
+                        foreground="white", command=add_not_known)
+add_not_known_button.grid(row=9, column=0, columnspan=3, sticky="nswe")
+
+add_needs_more_work_button = tkinter.Button(frame_right, text="Add Needs More", font=("Consolas"), background="black",
+                        foreground="white", command=add_needs_more_work)
+add_needs_more_work_button.grid(row=10, column=0, columnspan=3, sticky="nswe")
+
+add_known_button = tkinter.Button(frame_right, text="Add Known", font=("Consolas"), background="black",
+                        foreground="white", command=add_known)
+add_known_button.grid(row=11, column=0, columnspan=3, sticky="nswe")
 
 # Bind the window close event --> when the window closes the flashcards will be saved to a .txt file
 window.protocol("WM_DELETE_WINDOW", on_close)
