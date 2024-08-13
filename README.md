@@ -15,7 +15,7 @@
 - Can add and delete words and definitions within the program
 
 ### Upcoming additions/changes
-- 
+- Uses google to find definitions to words inputted without definitions
 
 ### Known Bugs
 - None
