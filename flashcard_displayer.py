@@ -2,6 +2,9 @@ import tkinter
 from tkinter import simpledialog
 import random
 from collections import deque
+from googlesearch import search
+import requests
+from bs4 import BeautifulSoup
 
 ROWS = 18
 COLS = 30
@@ -287,6 +290,10 @@ def add_new_word():
     if len(added_word) != 2:
         canvas.itemconfig(tagOrId=canvas_text, text="Wrong format used, must be word : definition")
         return
+    elif added_word[1][-5:] == "-find":
+        canvas.itemconfig(tagOrId=canvas_text, text="testing")
+        for j in search(added_word[0] + " definition", num_results=10):
+            print(j)
     else:
         not_known_list.append(FlashCard(added_word[0].strip(), added_word[1].strip()))
         canvas.itemconfig(tagOrId=canvas_text, text=added_word[0].strip() + " added to\nnot known list")
