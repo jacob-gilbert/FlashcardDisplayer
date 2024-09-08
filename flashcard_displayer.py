@@ -288,13 +288,13 @@ def search_definition(word):
         if "merriam-webster" in j: # if it finds a merriam-webster url I want it to go to the url and extract the definitions for the given word
             response = requests.get(j)
             if response.status_code == 200:
-                with open("response_content.html", "wb") as file:
-                    file.write(response.content)
                 print("found")
                 soup = BeautifulSoup(response.content, "html.parser")
-                definition = soup.find("span", {"class": "dtText"}).get_text()
-                if definition:
-                    print(f"Definition of '{word}': {definition}")
+                all_definitions = soup.find_all("span", {"class": "dtText"})
+                definitions = [element.get_text() for element in all_definitions]
+                with open("definition.txt", "w") as file:
+                    for line in definitions:
+                        file.write(line + "\n")
             return
         else:
             print("definition not found")
