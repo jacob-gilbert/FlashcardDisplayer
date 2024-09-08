@@ -280,6 +280,25 @@ def add_needs_more_work():
         curr_card = None
         canvas.itemconfig(tagOrId=canvas_text, text="Current List Is Empty Select a New One") # display that the list is empty
 
+# using google search to find the definition of an inputted word
+def search_definition(word):
+    canvas.itemconfig(tagOrId=canvas_text, text="testing")
+    for j in search(word + " definition", num_results=10):
+        print(j)
+        if "merriam-webster" in j: # if it finds a merriam-webster url I want it to go to the url and extract the definitions for the given word
+            response = requests.get(j)
+            if response.status_code == 200:
+                with open("response_content.html", "wb") as file:
+                    file.write(response.content)
+                print("found")
+                soup = BeautifulSoup(response.content, "html.parser")
+                definition = soup.find("span", {"class": "dtText"}).get_text()
+                if definition:
+                    print(f"Definition of '{word}': {definition}")
+            return
+        else:
+            print("definition not found")
+
 def add_new_word():
     # Get the value from the Entry widget
     user_input = entry.get()
@@ -290,10 +309,8 @@ def add_new_word():
     if len(added_word) != 2:
         canvas.itemconfig(tagOrId=canvas_text, text="Wrong format used, must be word : definition")
         return
-    elif added_word[1][-5:] == "-find":
-        canvas.itemconfig(tagOrId=canvas_text, text="testing")
-        for j in search(added_word[0] + " definition", num_results=10):
-            print(j)
+    elif added_word[1][-5:] == "-find": # the -find tag is used to find the definition of an inputted word
+        search_definition(added_word[0])
     else:
         not_known_list.append(FlashCard(added_word[0].strip(), added_word[1].strip()))
         canvas.itemconfig(tagOrId=canvas_text, text=added_word[0].strip() + " added to\nnot known list")
